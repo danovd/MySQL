@@ -147,3 +147,40 @@ left JOIN cars AS c ON co.car_id = c.id
 left JOIN categories AS cat ON c.category_id = cat.id
 left JOIN clients AS cl ON co.client_id = cl.id
 ORDER BY co.id
+
+
+/* 10 */
+CREATE FUNCTION udf_courses_by_client (phone_num VARCHAR (20))
+RETURNS INT
+DETERMINISTIC
+BEGIN
+DECLARE result INT;
+SET result = (SELECT count(co.id) FROM clients AS cl 
+JOIN courses AS co ON cl.id = co.client_id
+WHERE cl.phone_number = phone_num);
+RETURN result;
+END
+
+
+/* 11 */
+DELIMITER $$
+CREATE PROCEDURE udp_courses_by_address(_address_name VARCHAR(100))
+
+BEGIN
+SELECT a.`name`, cl.full_name AS full_names, 
+(CASE 
+WHEN co.bill < 20 THEN 'Low'
+WHEN co.bill < 30 THEN 'Medium'
+ELSE 'High'
+END
+) AS level_of_bill, 
+c.make, c.`condition`, cat.`name` AS cat_name
+ FROM courses AS co
+JOIN addresses AS a ON co.from_address_id = a.id
+JOIN clients AS cl ON co.client_id =cl.id
+JOIN cars AS c ON c.id = co.car_id
+JOIN categories AS cat ON cat.id = c.category_id
+WHERE a.`name` = _address_name
+ORDER BY c.make, full_names;
+ 
+END $$
