@@ -101,3 +101,49 @@ WHERE id NOT IN (
 /* 5 */
 SELECT make, model, `condition` FROM cars
 ORDER BY id
+
+
+/* 6 */
+SELECT d.first_name, d.last_name, c.make, c.model, c.mileage FROM drivers AS d
+JOIN cars_drivers AS cd ON d.id = cd.driver_id
+JOIN cars AS c ON cd.car_id = c.id
+WHERE c.mileage IS NOT NULL
+ORDER BY c.mileage DESC, d.first_name 
+
+
+/* 7 */
+SELECT c.id AS car_id, c.make, c.mileage,
+ COUNT(co.id) AS count_of_courses,
+ ROUND(AVG(co.bill), 2) AS avg_bill
+FROM cars AS c
+left JOIN courses AS co ON c.id = co.car_id
+GROUP BY c.id
+HAVING count_of_courses != 2
+ORDER BY count_of_courses DESC, c.id;
+
+
+/* 8 */
+SELECT cl.full_name, count(c.id) AS count_of_cars, SUM(co.bill) AS total_sum FROM clients AS cl
+JOIN courses AS co ON cl.id = co.client_id
+JOIN cars AS c ON c.id = co.car_id
+WHERE cl.full_name LIKE '_a%'
+GROUP BY cl.id
+HAVING count(c.id) > 1
+ORDER BY cl.full_name
+
+
+/* 9 */
+SELECT a.`name`, 
+
+(CASE 
+WHEN HOUR(co.`start`) >=6 AND  HOUR(co.`start`) <= 20 THEN 'Day'
+WHEN HOUR(co.`start`) <= 5 OR HOUR(co.`start`) >= 21 THEN 'Night'
+END
+)AS day_time, 
+co.bill AS bill, cl.full_name AS full_name, c.make, c.model, cat.`name` 
+FROM courses AS co
+left JOIN addresses AS a ON co.from_address_id = a.id
+left JOIN cars AS c ON co.car_id = c.id
+left JOIN categories AS cat ON c.category_id = cat.id
+left JOIN clients AS cl ON co.client_id = cl.id
+ORDER BY co.id
