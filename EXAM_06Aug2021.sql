@@ -1,5 +1,7 @@
-Database Basics MySQL Retake Exam - 06 August 2021
-1.
+<!--Database Basics MySQL Retake Exam - 06 August 2021
+
+
+<!--1.
 CREATE TABLE addresses(
 id INT PRIMARY KEY AUTO_INCREMENT,
 `name` VARCHAR(50) NOT NULL
@@ -72,32 +74,43 @@ REFERENCES teams(id);
 
 ALTER TABLE games_categories
 ADD PRIMARY KEY (game_id, category_id);
-2.
 
+
+<!--2.
 INSERT INTO games (`name`, `rating`, `budget`, `team_id`)
 SELECT LOWER(REVERSE(SUBSTRING(t.`name`, 2))), t.id, t.leader_id * 1000, t.id
 FROM teams AS t
 WHERE t.id BETWEEN 1 AND 9;
-3.
+
+
+<!--3.
 UPDATE employees AS e 
 RIGHT JOIN teams AS t ON t.leader_id = e.id
 SET e.salary = e.salary + 1000
 WHERE e.salary < 5000;
-4.
+
+
+<!--4.
 DELETE g FROM games AS g
 LEFT JOIN games_categories AS gc ON g.id = gc.game_id
 WHERE gc.category_id IS NULL AND g.release_date IS NULL
-5.
+
+
+<!--5.
 SELECT first_name, last_name, age, salary, happiness_level FROM employees
 ORDER BY salary, id;
-6.
+
+
+<!--6.
 SELECT t.`name` AS team_name, a.`name` AS address_name, CHAR_LENGTH(a.`name`) AS count_of_characters
 FROM teams AS t
 JOIN offices AS o ON t.office_id = o.id
 JOIN addresses AS a ON o.address_id = a.id
 WHERE o.website IS NOT NULL
 ORDER BY t.`name`, a.`name`;
-7.
+
+
+<!--7.
 SELECT c.`name` AS `name`, count(gc.game_id) AS games_count, ROUND(AVG(g.budget), 2)AS avg_budget, MAX(g.rating)AS max_rating
 FROM categories AS c
 JOIN games_categories AS gc ON c.id = gc.category_id
@@ -105,7 +118,9 @@ JOIN games AS g ON g.id = gc.game_id
 GROUP BY c.`name`
 HAVING max_rating >= 9.5
 ORDER BY games_count DESC, name ASC;
-8.
+
+
+<!--8.
 SELECT g.`name` AS `name`, g.`release_date` AS `release_date`,  
 concat(LEFT(g.`description`, 10), '...' ) AS summary, 
 (CASE 
@@ -120,7 +135,9 @@ WHERE YEAR(release_date) = 2022
 AND MONTH(release_date)%2 = 0 
 AND g.`name` LIKE '%2'
 ORDER BY `quarter`
-9.
+
+
+<!--9.
 SELECT g.`name` AS `name`, 
 (CASE 
 WHEN g.budget < 50000 THEN 'Normal budget'
@@ -134,7 +151,9 @@ JOIN addresses AS a ON o.address_id = a.id
 LEFT JOIN games_categories AS gc ON g.id = gc.game_id
 WHERE g.release_date IS NULL AND gc.game_id IS NULL
 ORDER BY `name`
-10.
+
+
+<!--10.
 CREATE FUNCTION udf_game_info_by_name (_name VARCHAR (20))
 RETURNS TEXT
 DETERMINISTIC
@@ -150,7 +169,9 @@ WHERE g.`name` = _name
 ); 
 RETURN result;
 END
-11.
+
+
+<!--11.
 CREATE PROCEDURE udp_update_budget(min_game_rating FLOAT)
 BEGIN
     UPDATE games AS g
@@ -158,4 +179,5 @@ BEGIN
     SET g.budget = g.budget + 100000, g.release_date = DATE_ADD(g.release_date, INTERVAL 1 YEAR)
     WHERE gc.category_id IS NULL AND g.rating > min_game_rating AND g.release_date IS NOT NULL;
 END
+
 
