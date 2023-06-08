@@ -1,8 +1,8 @@
-<!--Database Basics MySQL Exam - 20 June 2021
+/* Database Basics MySQL Exam - 20 June 2021 */
 
 
 
-<!-- 1.
+/* 1 */
 CREATE TABLE addresses(
 id INT PRIMARY KEY AUTO_INCREMENT,
 `name` VARCHAR(100) NOT NULL
@@ -78,10 +78,26 @@ REFERENCES drivers(id),
 ADD PRIMARY KEY (car_id, driver_id);
 
 
-<!-- 2
+/* 2 */
 INSERT INTO clients (full_name, phone_number)
 SELECT concat(d.first_name, ' ', d.last_name),  concat('(088) 9999', d.id * 2)  FROM drivers AS d
 WHERE d.id BETWEEN 10 AND 20
 
 
-<!--3
+/* 3 */
+UPDATE cars AS c
+SET c.`condition` = 'C'
+WHERE (c.mileage > 800000 OR c.mileage IS NULL) AND c.`year` <= 2010 AND c.make != 'Mercedes-Benz'
+
+
+/* 4 */
+DELETE FROM clients
+WHERE id NOT IN (
+  SELECT DISTINCT client_id
+  FROM courses
+) AND CHAR_LENGTH(full_name) > 3;
+
+
+/* 5 */
+SELECT make, model, `condition` FROM cars
+ORDER BY id
