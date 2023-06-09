@@ -97,5 +97,54 @@ SELECT username, gender, age FROM users
 ORDER BY age DESC, username ASC 
 
 
+/* 6 */
+SELECT p.id, p.`date` AS date_and_time, p.`description`, count(c.id) AS commentsCount FROM photos AS p
+JOIN comments AS c ON p.id = c.photo_id
+GROUP BY p.id
+ORDER BY count(c.id) DESC, p.id ASC
+LIMIT 5
 
+
+/* 7 */
+SELECT concat(u.id, ' ', u.username) AS id_username, u.email 
+FROM users AS u JOIN users_photos AS up ON u.id = up.user_id
+WHERE u.id = up.photo_id
+ORDER BY u.id
+
+
+/* 8 */
+SELECT p.id AS photo_id, COUNT(DISTINCT l.id) AS likes_count, COUNT(DISTINCT c.id) AS comments_count FROM photos AS p
+LEFT JOIN likes AS l ON p.id = l.photo_id
+LEFT JOIN comments AS c ON p.id = c.photo_id
+GROUP BY p.id
+ORDER BY count(distinct l.id) DESC, count(distinct c.id) DESC, p.id ASC 
+
+
+/* 9 */
+SELECT (concat(LEFT(p.`description`, 30), '...') )AS summary, p.`date` AS `date` FROM photos AS p
+WHERE DAY(p.`date`) = 10
+ORDER BY p.`date` DESC;
+
+
+/* 10 */
+CREATE FUNCTION udf_users_photos_count(_username VARCHAR(30))
+RETURNS INT
+DETERMINISTIC
+BEGIN 
+DECLARE result INT;
+SET result = (SELECT count(up.user_id) FROM users AS u
+JOIN users_photos AS up ON u.id = up.user_id
+WHERE u.username = _username);
+RETURN result;
+END
+
+
+/* 11 */
+CREATE PROCEDURE udp_modify_user(_address VARCHAR(30), _town VARCHAR(30))
+BEGIN
+UPDATE users AS u
+JOIN addresses AS a ON u.id = a.user_id
+SET u.age = u.age + 10
+WHERE a.address = _address AND a.town = _town;
+END
 
