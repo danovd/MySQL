@@ -159,4 +159,42 @@ AND e.last_name LIKE '%n'
 
 
 /* 9 */
+SELECT  REVERSE(s.`name`) AS reversed_name, concat( UPPER(t.`name`) , '-', a.`name`) AS full_address, 
+count(e.id) AS employees_count FROM stores AS s
+JOIN employees AS e ON e.store_id = s.id
+JOIN addresses AS a ON s.address_id = a.id
+JOIN towns AS t ON a.town_id = t.id
+GROUP BY s.id
+HAVING employees_count >=1
+ORDER BY full_address ASC
 
+
+/* 10 */
+CREATE FUNCTION udf_top_paid_employee_by_store(_store_name VARCHAR(50))
+RETURNS VARCHAR(255)
+DETERMINISTIC
+BEGIN
+DECLARE result VARCHAR(255);
+SET result = (SELECT concat(e.first_name, ' ', e.middle_name, '. ', e.last_name , ' works in store for ', (2020 - YEAR(e.hire_date)), ' years') AS ww
+FROM employees AS e 
+JOIN stores AS s ON e.store_id = s.id
+WHERE s.`name` = _store_name 
+ORDER BY e.salary DESC
+LIMIT 1 );
+RETURN result;
+END
+
+
+/* 11 */
+CREATE PROCEDURE udp_update_product_price (_address_name VARCHAR (50)) 
+BEGIN
+UPDATE products AS p
+JOIN products_stores AS ps ON p.id = ps.product_id
+JOIN stores AS s ON s.id = ps.store_id
+JOIN addresses AS a ON a.id = s.address_id
+SET p.price = p.price + (CASE 
+WHEN a.`name` LIKE '0%' THEN 100 
+ELSE 200 
+END)
+WHERE a.`name` = _address_name;
+END
