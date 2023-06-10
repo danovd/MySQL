@@ -98,3 +98,39 @@ UPDATE universities AS u
 SET u.tuition_fee = u.tuition_fee + 300
 WHERE u.id >= 5 AND u.id <= 12;
 
+
+/* 4 */
+DELETE FROM universities AS u
+WHERE u.number_of_staff IS NULL;
+
+
+/* 5 */
+SELECT * FROM cities
+ORDER BY population DESC;
+
+
+/* 6 */
+SELECT first_name, last_name, age, phone, email FROM students
+WHERE age >=21
+ORDER by first_name DESC, email ASC, id ASC
+limit 10;
+
+
+/* 7 */
+SELECT CONCAT(s.first_name, ' ', s.last_name) AS full_name,
+       SUBSTRING(s.email, 2, 10) AS username,
+       REVERSE(s.phone) AS `password`
+FROM students AS s
+LEFT JOIN students_courses AS sc ON s.id = sc.student_id
+WHERE sc.course_id IS NULL
+ORDER BY `password` DESC;
+
+
+/* 8 */
+SELECT COUNT(sc.student_id) AS students_count, u.name AS university_name
+FROM universities u
+LEFT JOIN courses c ON c.university_id = u.id
+LEFT JOIN students_courses sc ON sc.course_id = c.id
+GROUP BY u.id, u.name
+HAVING COUNT(sc.student_id) >= 8
+ORDER BY students_count DESC, university_name DESC;
